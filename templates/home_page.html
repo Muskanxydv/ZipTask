@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZipTask - Organize Your Tasks, Achieve Your Goals</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+  <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
@@ -38,6 +38,7 @@
 
   <!-- Hero Section -->
   <section class="hero">
+
     <div class="container hero-content">
       <div class="hero-text">
         <h1 class="hero-title">Organize Your Tasks,<br>Achieve Your Goals</h1>
@@ -56,6 +57,72 @@
       </div>
     </div>
   </section>
+
+  <!-- Categories Section -->
+<!-- Categories Section -->
+<section class="categories">
+  <div class="container">
+    <h2 class="categories-title">Task Categories We Offer</h2>
+
+    <div class="categories-slider">
+      <div class="categories-track">
+
+        <div class="category-card">
+          <img src="cleaning.jpeg" alt="Cleaning">
+          <p class="categories-text">Cleaning</p>
+        </div>
+
+        <div class="category-card">
+          <img src="delivery.jpeg" alt="Delivery">
+          <p class="categories-text">Delivery</p>
+        </div>
+
+        <div class="category-card">
+          <img src="repair.jpeg" alt="Repairs">
+          <p class="categories-text">Repairs</p>
+        </div>
+
+        <div class="category-card">
+          <img src="grocery help.jpeg" alt="Grocery">
+          <p class="categories-text">Grocery Pickup</p>
+        </div>
+
+        <div class="category-card">
+          <img src="pet care.jpeg" alt="Pet Care">
+          <p class="categories-text">Pet Care</p>
+        </div>
+
+        <div class="category-card">
+          <img src="tutoring.jpeg" alt="Tutoring">
+          <p class="categories-text">Tutoring</p>
+        </div>
+
+        <div class="category-card">
+          <img src="moving help.jpeg" alt="Moving">
+          <p class="categories-text">Moving Help</p>
+        </div>
+
+        <!-- duplicate cards for infinite loop -->
+
+        <div class="category-card">
+          <img src="cleaning.jpeg" alt="Cleaning">
+          <p class="categories-text">Cleaning</p>
+        </div>
+
+        <div class="category-card">
+          <img src="delivery.jpeg" alt="Delivery">
+          <p class="categories-text">Delivery</p>
+        </div>
+
+        <div class="category-card">
+          <img src="repair.jpeg" alt="Repairs">
+          <p class="categories-text">Repairs</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
 
   <!-- Features Section -->
   <section class="features">
@@ -158,6 +225,5 @@
     </div>
   </footer>
 </body>
-
 
 </html>
