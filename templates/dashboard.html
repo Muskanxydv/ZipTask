@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - ZipTask</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div class="container">
+
+            <div class="dashboard-header-content">
+
+                <div class="logo">
+
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="ZipTask Logo" width="40">
+
+                    <span class="logo-text">ZipTask</span>
+
+                </div>
+
+                <div class="dashboard-nav">
+
+                    <div class="profile-menu">
+
+                        <div class="avatar">{{ user.name[0] }}</div>
+
+                        <span class="profile-name">{{ user.name }}</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+
+    <main class="dashboard-main">
+
+        <div class="container">
+
+            <div class="welcome-section">
+
+                <h1>Welcome back, {{ user.name }} 👋</h1>
+
+                <p>Post a task or help someone nearby?</p>
+
+            </div>
+
+
+
+            <div class="action-cards">
+
+                <div class="action-card">
+
+                    <h3>Post a Task</h3>
+
+                    <p>Need help? Post an errand for people nearby.</p>
+
+                    <a href="/post-task/{{ user.id }}">
+                        <button>Create Task</button>
+                    </a>
+
+                </div>
+
+
+                <div class="action-card">
+
+                    <h3>Find Tasks</h3>
+
+                    <p>Browse nearby errands and start earning.</p>
+
+                    <a href="#tasks">
+                        <button>Browse Tasks</button>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            {% if current_task %}
+
+            <div class="current-task-section">
+
+                <h2>Your Current Task</h2>
+
+                <div class="task-card">
+
+                    <h3>{{ current_task.title }}</h3>
+
+                    <p>{{ current_task.description }}</p>
+
+                    <p><b>Category:</b> {{ current_task.category }}</p>
+
+                    <p><b>Payment:</b> ₹{{ current_task.payment }}</p>
+
+                    <p><b>Status:</b> {{ current_task.status }}</p>
+
+                    <button onclick="completeTask({{ current_task.id }})">
+                        Mark as Complete
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+
+            <div class="categories-section">
+
+                <h2>Browse by Category</h2>
+
+                <div class="categories-grid">
+
+                    <button onclick="filterCategory('delivery')">📦 Delivery</button>
+
+                    <button onclick="filterCategory('grocery')">🛒 Grocery</button>
+
+                    <button onclick="filterCategory('household')">🧹 Household</button>
+
+                    <button onclick="filterCategory('pickup')">🚗 Pickup & Drop</button>
+
+                    <button onclick="filterCategory('petcare')">🐾 Pet Care</button>
+
+                    <button onclick="filterCategory('tutoring')">📚 Tutoring</button>
+
+                    <button onclick="filterCategory('all')">Show All</button>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="tasks-section" id="tasks">
+
+                <h2>Available Tasks Nearby</h2>
+
+                <div class="tasks-feed">
+
+                    {% for task in tasks %}
+
+                    <div class="task-card" data-category="{{ task.category }}">
+
+                        <h3>{{ task.title }}</h3>
+
+                        <p>{{ task.description }}</p>
+
+                        <p><b>Category:</b> {{ task.category }}</p>
+
+                        <p><b>Payment:</b> ₹{{ task.payment }}</p>
+
+                        <p><b>Distance:</b> {{ task.distance }} km away</p>
+
+                        <button onclick="acceptTask({{ task.id }})">
+
+                            Accept Task
+
+                        </button>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="ZipTask Logo">
+                </div>
+                <div>
+                    <span class="footer-logo-text">ZipTask</span>
+                    <p class="footer-description">
+                        Hyperlocal errand marketplace connecting task<br>
+                        posters with eager workers.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="footer-copyright">
+                © 2026 ZipTask. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    <script>
+
+        function filterCategory(category) {
+
+            const tasks = document.querySelectorAll(".task-card");
+
+            tasks.forEach(task => {
+
+                if (category === "all" || task.dataset.category === category) {
+
+                    task.style.display = "block";
+
+                } else {
+
+                    task.style.display = "none";
+
+                }
+
+            });
+
+        }
+
+
+
+        async function acceptTask(taskId) {
+
+            const response = await fetch("/accept-task", {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    task_id: taskId,
+
+                    user_id: {{ user.id }}
+
+})
+
+});
+
+        const result = await response.json();
+
+        alert(result.message);
+
+        location.reload();
+
+}
+
+
+
+        async function completeTask(taskId) {
+
+            const response = await fetch("/complete-task", {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    task_id: taskId
+
+                })
+
+            });
+
+            const result = await response.json();
+
+            alert(result.message);
+
+            location.reload();
+
+        }
+
+    </script>
+
+</body>
+
+</html>
