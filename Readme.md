@@ -81,7 +81,7 @@ cd ziptask
 ### 2️⃣ Install dependencies
 
 ```bash
-pip install flask flask_sqlalchemy
+pip install -r requirements.txt
 ```
 
 ### 3️⃣ Run the application
