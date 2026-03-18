@@ -22,11 +22,19 @@
       <nav class="nav">
         <a href="{{ url_for('home') }}" class="nav-link active">Home</a>
         <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
-        <a href="{{ url_for('login') }}" class="nav-link">Log In</a>
+        {% if 'user_id' in session %}
+          <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="nav-link">Log In</a>
+        {% endif %}
       </nav>
       <div class="header-actions">
-        {{ ui.button('Sign In', url_for('login'), 'ghost') }}
-        {{ ui.button('Get Started', url_for('register'), 'primary') }}
+        {% if 'user_id' in session %}
+          {{ ui.button('Log Out', url_for('auth.logout'), 'ghost') }}
+        {% else %}
+          {{ ui.button('Sign In', url_for('login'), 'ghost') }}
+          {{ ui.button('Get Started', url_for('register'), 'primary') }}
+        {% endif %}
       </div>
     </div>
   </header>
