@@ -1,8 +1,9 @@
+import uuid
 from models import db
 
 class Task(db.Model):
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     title = db.Column(db.String(200), nullable=False)
 
@@ -14,6 +15,6 @@ class Task(db.Model):
 
     status = db.Column(db.String(20), default="open")
 
-    posted_by = db.Column(db.Integer, db.ForeignKey("user.id"))
+    posted_by = db.Column(db.String(36), db.ForeignKey("user.id"))
 
-    accepted_by = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    accepted_by = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=True)

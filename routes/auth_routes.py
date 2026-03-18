@@ -1,5 +1,5 @@
-from flask import Blueprint, request, redirect, url_for, render_template
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, request, redirect, url_for, render_template, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import User
 from models import db
 
@@ -47,8 +47,9 @@ def register_user():
     db.session.add(new_user)
     db.session.commit()
 
-    # redirect user to dashboard after account creation
-    return redirect(url_for("dashboard", user_id=new_user.id))
+    # log user in and redirect to dashboard
+    session["user_id"] = new_user.id
+    return redirect(url_for("dashboard"))
 
 
 # -----------------------------
@@ -58,3 +59,30 @@ def register_user():
 def login_page():
 
     return render_template("login_page.html")
+
+# -----------------------------
+# Handle Login
+# -----------------------------
+@auth_bp.route("/login-user", methods=["POST"])
+def login_user():
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user or not check_password_hash(user.password, password):
+        flash("Invalid email or password")
+        return redirect(url_for("auth.login_page"))
+
+    session["user_id"] = user.id
+    return redirect(url_for("dashboard"))
+
+# -----------------------------
+# Handle Logout
+# -----------------------------
+@auth_bp.route("/logout")
+def logout():
+
+    session.pop("user_id", None)
+    return redirect(url_for("home"))

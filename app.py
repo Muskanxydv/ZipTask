@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 from models import db
 from models.user import User
 from models.task import Task
@@ -26,6 +26,8 @@ app.register_blueprint(auth_bp)
 
 @app.route("/")
 def home():
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
     return render_template("home_page.html")
 
 @app.route("/about")
@@ -49,8 +51,13 @@ def forgot_password():
 # Dashboard
 # --------------------------
 
-@app.route("/dashboard/<int:user_id>")
-def dashboard(user_id):
+@app.route("/dashboard")
+def dashboard():
+
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+
+    user_id = session["user_id"]
 
     # get user from database
     user = User.query.get_or_404(user_id)
