@@ -1,130 +1,1188 @@
-{% extends "base.html" %}
-{% block title %}Dashboard - ZipTask{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<section class="container" style="padding: 4rem 1.5rem;">
-  <div class="section-header left">
-    <h1 class="hero-title" style="font-size: 3rem;">Welcome back, {{ user.name }} 👋</h1>
-    <p class="section-desc">Post a task or help someone nearby?</p>
-  </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ZipTask</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
 
-  <div class="features-grid" style="margin-bottom: 4rem;">
-    <div class="feature-box">
-      <div class="feat-icon"><i data-lucide="plus-circle"></i></div>
-      <h3 class="feat-title">Post a Task</h3>
-      <p class="feat-desc">Need help? Post an errand for people nearby.</p>
-      {{ ui.button('Create Task', '/post-task/' ~ user.id, 'primary', class='mt-4', style='margin-top: 1.5rem;') }}
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="dashboard-header-content">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="ZipTask Logo">
+                    <span class="logo-text" style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">ZipTask</span>
+                </div>
+
+                <div class="profile-menu" style="display: flex; align-items: center; gap: 0.75rem;">
+                    <a href="/profile" class="avatar">
+                        {% if user.profile_pic %}
+                        <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile">
+                        {% else %}
+                        {{ user.name[0] | upper }}
+                        {% endif %}
+                    </a>
+                    <span class="profile-name">{{ user.name }}</span>
+                    <a href="/logout" class="logout-link">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="dashboard-wrapper">
+
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="sidebar-link active">Dashboard</a>
+                <a href="/dashboard#available-tasks-section" class="sidebar-link">Available Tasks</a>
+                <a href="/dashboard#post-task-section" class="sidebar-link">Post a Task</a>
+                <a href="/dashboard#my-tasks-section" class="sidebar-link">My Tasks</a>
+                <a href="/leaderboard" class="sidebar-link">Leaderboard</a>
+            </nav>
+
+            <div style="margin-top: auto;">
+                <a href="/profile" class="sidebar-link" style="display: block;">Profile</a>
+                <a href="/profile" class="sidebar-link" style="display: block;">Settings</a>
+                <a href="/logout" class="sidebar-link"
+                    style="display: block; color: #ef4444; margin-top: 1rem;">Logout</a>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="container" style="max-width: 800px;">
+                <h1 class="welcome-title">
+                    <span id="greeting-text"></span> {{ user.name }}
+                    <img src="{{ url_for('static', filename='images/hello-icon.png') }}" alt="Wave"
+                        class="welcome-icon">
+                </h1>
+                <p class="welcome-subtitle">What do you need help with today?</p>
+
+                <div class="post-task-box" id="post-task-section">
+                    <h2>Post a Task</h2>
+                    <form action="/post-task" method="POST" class="post-task-form">
+                        <input type="text" name="title" placeholder="What needs to be done?" required>
+                        <textarea name="description" placeholder="Provide some details..." required></textarea>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <select name="category" required style="flex: 1;">
+                                <option value="">Select Category...</option>
+
+                                <optgroup label="Household">
+                                    <option value="cleaning">Cleaning</option>
+                                    <option value="cooking">Cooking / Meal Prep</option>
+                                    <option value="laundry">Laundry / Ironing</option>
+                                    <option value="dishwashing">Dishwashing</option>
+                                    <option value="organizing">Home Organization</option>
+                                </optgroup>
+
+                                <optgroup label="Shopping & Errands">
+                                    <option value="grocery">Grocery Shopping</option>
+                                    <option value="medicine">Medicine Pickup</option>
+                                    <option value="parcel">Parcel Pickup/Drop</option>
+                                    <option value="bill">Bill Payments</option>
+                                    <option value="queue">Queue Standing</option>
+                                </optgroup>
+
+                                <optgroup label="Delivery & Transport">
+                                    <option value="food_delivery">Food Delivery</option>
+                                    <option value="package_delivery">Package Delivery</option>
+                                    <option value="document_delivery">Document Delivery</option>
+                                    <option value="ride">Ride Assistance</option>
+                                </optgroup>
+
+                                <optgroup label="Repairs & Maintenance">
+                                    <option value="electrical">Electrical Work</option>
+                                    <option value="plumbing">Plumbing</option>
+                                    <option value="furniture">Furniture Repair</option>
+                                    <option value="appliance">Appliance Fixing</option>
+                                    <option value="handyman">General Handyman</option>
+                                </optgroup>
+
+                                <optgroup label="Academic & Study Help">
+                                    <option value="assignment">Assignment Help</option>
+                                    <option value="notes">Notes Making</option>
+                                    <option value="tutoring">Tutoring</option>
+                                    <option value="project">Project Assistance</option>
+                                    <option value="presentation">Presentation Help</option>
+                                </optgroup>
+
+                                <optgroup label="Digital & Tech">
+                                    <option value="data_entry">Data Entry</option>
+                                    <option value="typing">Typing Work</option>
+                                    <option value="design">Graphic Design</option>
+                                    <option value="website">Website Help</option>
+                                    <option value="software">App/Software Setup</option>
+                                </optgroup>
+
+                                <optgroup label="Personal Assistance">
+                                    <option value="elderly">Elderly Assistance</option>
+                                    <option value="babysitting">Babysitting</option>
+                                    <option value="petcare">Pet Care</option>
+                                    <option value="companion">Companion Help</option>
+                                </optgroup>
+
+                                <optgroup label="Events & Occasions">
+                                    <option value="setup">Event Setup</option>
+                                    <option value="decoration">Decoration</option>
+                                    <option value="photography">Photography/Videography</option>
+                                    <option value="crowd">Crowd Management</option>
+                                    <option value="invitation">Invitation Distribution</option>
+                                </optgroup>
+
+                                <optgroup label="Beauty & Grooming">
+                                    <option value="makeup">Makeup</option>
+                                    <option value="mehndi">Mehndi / Henna</option>
+                                    <option value="hair">Hair Styling</option>
+                                    <option value="skincare">Skincare / Facials</option>
+                                    <option value="nails">Nail Care</option>
+                                    <option value="grooming">Groom Styling</option>
+                                </optgroup>
+
+                                <optgroup label="Miscellaneous">
+                                    <option value="moving">Moving Help</option>
+                                    <option value="waiting">Waiting Tasks</option>
+                                    <option value="small_tasks">Small Favors</option>
+                                    <option value="other">Other</option>
+                                </optgroup>
+                            </select>
+
+                            <input type="number" name="payment" placeholder="Budget (₹)" required style="flex: 1;">
+                        </div>
+
+                        <button type="submit" class="btn-post">Post Task</button>
+                    </form>
+                </div>
+                <div id="my-tasks-section">
+                    <div class="tasks-section" id="my-accepted-section" style="display: none;">
+                        <div class="tasks-header">
+                            <h2 class="section-title" style="margin-bottom: 0; color: rgb(43, 75, 43);">Your Active
+                                Tasks</h2>
+                        </div>
+                        <div id="my-accepted-list" class="tasks-feed"></div>
+                    </div>
+
+                    <div class="tasks-section" id="my-posted-section" style="display: none;">
+                        <div class="tasks-header">
+                            <h2 class="section-title" style="margin-bottom: 0;">Tasks You Posted</h2>
+                        </div>
+                        <div id="my-posted-list" class="tasks-feed"></div>
+                    </div>
+
+                    <div id="available-tasks-section">
+                        <div class="tasks-section">
+                            <div class="tasks-header"
+                                style="flex-direction: column; align-items: flex-start; gap: 1.5rem;">
+                                <h2 class="section-title" style="margin-bottom: 0;">Available Tasks Near You</h2>
+
+                                <div class="filter-buttons" style="margin-top: 0; width: 100%;">
+                                    <button class="button" onclick="filterCategory('all', this)">All<div class="star-1">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-2">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-3">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-4">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-5">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-6">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                    <button class="button" onclick="filterCategory('household', this)">Household<div
+                                            class="star-1">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-2">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-3">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-4">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-5">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-6">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                    <button class="button" onclick="filterCategory('grocery', this)">Grocery<div
+                                            class="star-1">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-2">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-3">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-4">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-5">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-6">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                    <button class="button" onclick="filterCategory('delivery', this)">Delivery<div
+                                            class="star-1">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-2">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-3">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-4">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-5">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-6">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                    <button class="button" onclick="filterCategory('tutoring', this)">Tutoring<div
+                                            class="star-1">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-2">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-3">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-4">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-5">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-6">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                    <button class="button" onclick="filterCategory('petcare', this)">Pet Care<div
+                                            class="star-1">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-2">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-3">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-4">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-5">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-6">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                    <button class="button" onclick="filterCategory('makeup', this)">Make-up<div
+                                            class="star-1">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-2">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-3">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-4">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-5">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div class="star-6">
+                                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53"
+                                                style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                                <defs></defs>
+                                                <g id="Layer_x0020_1">
+                                                    <metadata id="CorelCorpID_0Corel-Layer"></metadata>
+                                                    <path
+                                                        d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"
+                                                        class="fil0"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="task-list" class="tasks-feed"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+        </main>
     </div>
+    <footer class="footer" style="margin-left: 262px; width: calc(100% - 262px);">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="ZipTask Logo">
+                </div>
+                <div>
+                    <span class="footer-logo-text">ZipTask</span>
+                    <p class="footer-description">
+                        Hyperlocal errand marketplace connecting task<br>
+                        posters with eager workers.
+                    </p>
+                </div>
+            </div>
 
-    <div class="feature-box">
-      <div class="feat-icon"><i data-lucide="search"></i></div>
-      <h3 class="feat-title">Find Tasks</h3>
-      <p class="feat-desc">Browse nearby errands and start earning.</p>
-      <a href="#tasks" class="btn btn-secondary" style="margin-top: 1.5rem;">Browse Tasks</a>
-    </div>
-  </div>
+            <div class="footer-copyright">
+                © 2026 ZipTask. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    <div id="toast-container"></div>
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
 
-  {% if current_task %}
-  <div class="section-header left" style="margin-bottom: 2rem;">
-    <h2 class="section-title">Your Current Task</h2>
-  </div>
-  <div class="auth-card" style="max-width: 100%; margin-bottom: 4rem; display: flex; flex-direction: column; gap: 1rem;">
-    <div style="display: flex; align-items: center; justify-content: space-between;">
-        <h3 class="feat-title" style="margin: 0;">{{ current_task.title }}</h3>
-        {{ ui.badge(current_task.status) }}
-    </div>
-    <p class="feat-desc">{{ current_task.description }}</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; padding: 1rem; background: var(--bg-color); border-radius: var(--radius-md);">
-        <div><strong>Category:</strong> {{ current_task.category }}</div>
-        <div><strong>Payment:</strong> ₹{{ current_task.payment }}</div>
-    </div>
-    <button onclick="completeTask({{ current_task.id }})" class="btn btn-primary" style="align-self: flex-start;">
-      <i data-lucide="check-circle"></i> Mark as Complete
-    </button>
-  </div>
-  {% endif %}
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+            const icon = type === 'success' ? '✓' : '⚠️';
 
-  <!-- Categories -->
-  <div class="section-header left" style="margin-bottom: 2rem;">
-    <h2 class="section-title">Browse by Category</h2>
-  </div>
-  <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 4rem;">
-    <button onclick="filterCategory('delivery')" class="btn btn-secondary"><i data-lucide="package"></i> Delivery</button>
-    <button onclick="filterCategory('grocery')" class="btn btn-secondary"><i data-lucide="shopping-cart"></i> Grocery</button>
-    <button onclick="filterCategory('household')" class="btn btn-secondary"><i data-lucide="home"></i> Household</button>
-    <button onclick="filterCategory('pickup')" class="btn btn-secondary"><i data-lucide="truck"></i> Pickup & Drop</button>
-    <button onclick="filterCategory('petcare')" class="btn btn-secondary"><i data-lucide="dog"></i> Pet Care</button>
-    <button onclick="filterCategory('tutoring')" class="btn btn-secondary"><i data-lucide="book-open"></i> Tutoring</button>
-    <button onclick="filterCategory('all')" class="btn btn-ghost">Show All</button>
-  </div>
+            toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
 
-  <div class="section-header left" id="tasks" style="margin-bottom: 2rem;">
-    <h2 class="section-title">Available Tasks Nearby</h2>
-  </div>
-  <div class="features-grid">
-    {% for task in tasks %}
-    <div class="feature-box task-card" data-category="{{ task.category }}">
-      <div style="display: flex; justify-content: space-between; width: 100%;">
-          <h3 class="feat-title">{{ task.title }}</h3>
-          <span style="color: var(--primary); font-weight: 700; font-size: 1.25rem;">₹{{ task.payment }}</span>
-      </div>
-      <p class="feat-desc" style="flex: 1;">{{ task.description }}</p>
-      
-      <div style="display: flex; gap: 1rem; width: 100%; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
-          <span><i data-lucide="tag" style="width: 16px; height: 16px; vertical-align: middle;"></i> {{ task.category }}</span>
-          <span><i data-lucide="map-pin" style="width: 16px; height: 16px; vertical-align: middle;"></i> {{ task.distance }} km</span>
-      </div>
-      <button onclick="acceptTask({{ task.id }})" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">
-        <i data-lucide="check"></i> Accept Task
-      </button>
-    </div>
-    {% endfor %}
-  </div>
-</section>
+            container.appendChild(toast);
 
-{% block scripts %}
-<script>
-    function filterCategory(category) {
-        const tasks = document.querySelectorAll(".task-card");
-        tasks.forEach(task => {
-            if (category === "all" || task.dataset.category === category) {
-                task.style.display = "flex";
-            } else {
-                task.style.display = "none";
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400); 
+            }, 3000);
+        }
+        function loadTasks(category = "all") {
+            let url = "/tasks";
+            if (category !== "all") {
+                url += "?category=" + category;
             }
-        });
-    }
 
-    async function acceptTask(taskId) {
-        const response = await fetch("/accept-task", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                task_id: taskId,
-                user_id: {{ user.id }}
-            })
-        });
-        const result = await response.json();
-        alert(result.message);
-        location.reload();
-    }
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById("task-list");
+                    container.innerHTML = "";
 
-    async function completeTask(taskId) {
-        const response = await fetch("/complete-task", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                task_id: taskId
-            })
-        });
-        const result = await response.json();
-        alert(result.message);
-        location.reload();
-    }
-</script>
-{% endblock %}
-{% endblock %}
+                    if (data.length === 0) {
+                        container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 2rem;">No tasks found in this category right now.</p>`;
+                        return;
+                    }
+
+                    data.forEach(task => {
+
+                        container.innerHTML += `
+                <div class="task-card" style="background: rgba(0,0,0,0.3); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);" onclick="this.classList.toggle('expanded')">
+                    <div class="task-card-header">
+                        <div>
+                            <h3 class="task-title">${task.title}</h3>
+                            <span class="task-category-tag" style="text-transform: capitalize;">${task.category}</span>
+                        </div>
+                        <div class="task-payment">
+                            <span class="payment-label" style="color: #000000; font-weight: 700;">Amount offered</span>
+                            <span class="task-amount">₹${task.payment}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="task-description" style="white-space: pre-wrap;"><span style="color: #ffffff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Task Details</span><br>${task.description}
+                    </div>
+                    
+                    <div class="task-footer" style="margin-top: 1rem;">
+                        <button class="accept-task-btn" onclick="event.stopPropagation(); applyTask(${task.id})">
+                            Apply for Task
+                        </button>
+                    </div>
+                </div>
+            `;
+                    });
+                });
+        }
+
+
+        function filterCategory(category, buttonElement) {
+
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            }
+
+            loadTasks(category);
+        }
+
+        async function acceptTask(taskId) {
+            const response = await fetch(`/accept-task/${taskId}`, {
+                method: "POST"
+            });
+
+            const result = await response.json();
+            alert(result.message || result.error);
+            loadTasks(); // refresh
+        }
+
+        // load tasks on page load
+        function loadMyTasks() {
+            fetch("/my-tasks")
+                .then(res => res.json())
+                .then(data => {
+
+                    // 1. RENDER ACCEPTED TASKS (WORKER VIEW)
+                    const acceptedContainer = document.getElementById("my-accepted-list");
+                    const acceptedSection = document.getElementById("my-accepted-section");
+                    acceptedContainer.innerHTML = "";
+
+                    if (data.accepted && data.accepted.length > 0) {
+                        acceptedSection.style.display = "block";
+                        data.accepted.forEach(task => {
+
+                            // NEW: Build the Timeline for the Worker so they can see their history!
+                            let timelineHTML = '<div style="margin-top: 1.25rem; margin-bottom: 1.5rem; padding-left: 12px; border-left: 3px solid rgba(59, 228, 119, 0.3); display: flex; flex-direction: column; gap: 1.5rem;">';
+                            if (task.updates && task.updates.length > 0) {
+                                task.updates.forEach(up => {
+                                    let proofHtml = up.proof_image ? `<div style="margin-top: 12px;"><img src="/static/uploads/${up.proof_image}" style="max-width: 150px; border-radius: 8px; border: 2px solid #3BE477; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" onclick="event.stopPropagation(); window.open('/static/uploads/${up.proof_image}')"></div>` : "";
+
+                                    timelineHTML += `
+                                        <div style="position: relative; padding-left: 1.5rem;">
+                                            <div style="position: absolute; left: -1.15rem; top: 0.25rem; width: 14px; height: 14px; background-color: #3BE477; border-radius: 50%; box-shadow: 0 0 10px #3BE477, 0 0 20px rgba(59, 228, 119, 0.4);"></div>
+                                            <div style="background: rgba(0, 0, 0, 0.5); padding: 1.25rem; border-radius: 0.75rem; border: 1px solid rgba(59, 228, 119, 0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                    <span style="color: #3BE477; font-weight: 900; font-size: 1.1rem;">${up.percentage}% Complete</span>
+                                                    <span style="color: #9ca3af; font-size: 0.8rem; font-weight: bold;">${up.time}</span>
+                                                </div>
+                                                <p style="color: #f3f4f6; font-size: 0.95rem; margin-top: 0; line-height: 1.4;">${up.message}</p>
+                                                ${proofHtml}
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            } else { timelineHTML += `<p style="color: #9ca3af; font-size: 0.85rem; font-style: italic; margin-top: 0.5rem; padding-left: 1rem;">No updates sent yet. Start working to log your progress!</p>`; }
+                            timelineHTML += '</div>';
+
+
+                            // Determine the form/lock state
+                            let isLocked = task.payment_status === "unpaid" && task.updates.some(u => u.percentage >= 50);
+                            let updateFormHtml = "";
+
+                            if (task.payment_status === "fully_paid") {
+                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #3BE477; font-weight: bold; text-align: center; border: 1px solid #3BE477; padding: 1rem; border-radius: 0.5rem; background: rgba(59, 228, 119, 0.1);">🎉 Task Completed & Fully Paid!</div>`;
+                            } else if (isLocked) {
+                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">⏳ Waiting for Requester to release the 50% milestone payment.</div>`;
+                            } else {
+                                updateFormHtml = `
+                                    <div style="margin-top: 0.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 0.75rem;">
+                                        <label style="color: #3BE477; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Post New Update</label>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <input type="number" id="perc-${task.id}" placeholder="%" min="0" max="100" 
+                                                style="width: 80px; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; font-weight: bold; outline: none; text-align: center;" 
+                                                oninput="toggleProofInput(${task.id})" onclick="event.stopPropagation();">
+                                            <input type="text" id="msg-${task.id}" placeholder="What did you just complete?" 
+                                                style="flex: 1; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; outline: none;" 
+                                                onclick="event.stopPropagation();">
+                                        </div>
+                                        <div id="proof-container-${task.id}" style="display: none; background: rgba(59, 228, 119, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px dashed #3BE477; margin-top: 0.5rem;">
+                                            <label style="display: block; color: #3BE477; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem;">📸 Upload Proof of Work (Required for 50% & 100%)</label>
+                                            <input type="file" id="proof-${task.id}" style="width: 100%; color: white; font-size: 0.9rem;" onclick="event.stopPropagation();">
+                                        </div>
+                                        <button onclick="postTaskUpdate(${task.id}, event)" style="margin-top: 0.5rem; background: #3BE477; color: black; border: none; border-radius: 0.5rem; padding: 0.75rem 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;">Send Update</button>
+                                    </div>
+                                `;
+                            }
+
+                            acceptedContainer.innerHTML += `
+                                <div class="task-card" style="background: rgba(0,0,0,0.4); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);" onclick="this.classList.toggle('expanded')">
+                                    <div class="task-card-header">
+                                        <div>
+                                            <h3 class="task-title" style="color: white;">${task.title}</h3>
+                                            <span class="task-category-tag">${task.category}</span>
+                                        </div>
+                                        <div class="task-payment">
+                                            <span class="payment-label" style="color: #9ca3af; font-weight: 700;">You Earn</span>
+                                            <span class="task-amount">₹${task.payment}</span>
+                                        </div>
+                                    </div>
+                                    <div class="task-description">
+                                        <div style="background: rgba(59, 228, 119, 0.1); border: 1px solid rgba(59, 228, 119, 0.3); padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <span style="font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; font-weight: bold;">Assigned Worker</span><br>
+                                                <span style="color: white; font-weight: bold; font-size: 1.1rem;">${task.contact_name}</span>
+                                            </div>
+                                            ${task.contact_phone ? `
+                                            <div style="text-align: right;">
+                                                <span style="font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; font-weight: bold;">Contact Number</span><br>
+                                                <span style="color: #3BE477; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px;">📞 ${task.contact_phone}</span>
+                                            </div>` : ''}
+                                        </div>
+
+                                        <span style="color: #3BE477; font-size: 0.8rem; text-transform: uppercase; font-weight: bold;">Task History</span><br>
+                                        ${timelineHTML}
+                                        ${updateFormHtml}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else { acceptedSection.style.display = "none"; }
+
+                    // 2. RENDER POSTED TASKS (REQUESTER VIEW - TIMELINE)
+                    const postedContainer = document.getElementById("my-posted-list");
+                    const postedSection = document.getElementById("my-posted-section");
+                    postedContainer.innerHTML = "";
+
+                    if (data.posted && data.posted.length > 0) {
+                        postedSection.style.display = "block";
+                        data.posted.forEach(task => {
+
+                            let timelineHTML = '<div style="margin-top: 1.5rem; padding-left: 12px; border-left: 3px solid rgba(59, 228, 119, 0.3); display: flex; flex-direction: column; gap: 1.5rem;">';
+                            if (task.updates && task.updates.length > 0) {
+                                task.updates.forEach(up => {
+                                    let proofHtml = up.proof_image ? `<div style="margin-top: 12px;"><img src="/static/uploads/${up.proof_image}" style="max-width: 150px; border-radius: 8px; border: 2px solid #3BE477; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" onclick="event.stopPropagation(); window.open('/static/uploads/${up.proof_image}')"></div>` : "";
+
+                                    timelineHTML += `
+                                        <div style="position: relative; padding-left: 1.5rem;">
+                                            <div style="position: absolute; left: -1.15rem; top: 0.25rem; width: 14px; height: 14px; background-color: #3BE477; border-radius: 50%; box-shadow: 0 0 10px #3BE477, 0 0 20px rgba(59, 228, 119, 0.4);"></div>
+                                            <div style="background: rgba(0, 0, 0, 0.5); padding: 1.25rem; border-radius: 0.75rem; border: 1px solid rgba(59, 228, 119, 0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                    <span style="color: #3BE477; font-weight: 900; font-size: 1.1rem;">${up.percentage}% Complete</span>
+                                                    <span style="color: #9ca3af; font-size: 0.8rem; font-weight: bold;">${up.time}</span>
+                                                </div>
+                                                <p style="color: #f3f4f6; font-size: 0.95rem; margin-top: 0; line-height: 1.4;">${up.message}</p>
+                                                ${proofHtml}
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            } else { timelineHTML += `<p style="color: #9ca3af; font-size: 0.85rem; font-style: italic; margin-top: 1rem; padding-left: 1rem;">Waiting for worker to start.</p>`; }
+                            timelineHTML += '</div>';
+
+                            let paymentBtnHtml = "";
+                            const halfAmount = task.payment / 2;
+
+                            if (task.payment_status === "unpaid" && task.updates.some(u => u.percentage >= 50)) {
+                                paymentBtnHtml = `<button onclick="processPayment(${task.id}, event)" style="margin-top: 2rem; width: 100%; background: #fbbf24; color: black; border: none; border-radius: 0.5rem; padding: 1rem; font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);">💳 Release 50% Milestone (₹${halfAmount})</button>`;
+                            } else if (task.payment_status === "half_paid" && task.updates.some(u => u.percentage === 100)) {
+                                paymentBtnHtml = `<button onclick="processPayment(${task.id}, event)" style="margin-top: 2rem; width: 100%; background: #3BE477; color: black; border: none; border-radius: 0.5rem; padding: 1rem; font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 228, 119, 0.4);">💳 Release Final Payment (₹${halfAmount}) & Complete</button>`;
+                            } else if (task.payment_status === "fully_paid") {
+                                paymentBtnHtml = `<div style="margin-top: 1.5rem; text-align: center; color: #3BE477; font-weight: bold; padding: 0.75rem; border: 1px solid #3BE477; border-radius: 0.5rem;">✅ Fully Paid & Completed</div>`;
+                            }
+                            let openTaskActionsHtml = "";
+                            
+                            if (task.status === "open") {
+                                openTaskActionsHtml = `
+                                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; width: 100%;">
+                                        <a href="/review-applicants/${task.id}" style="flex: 1; text-align: center; background: #fbbf24; color: black; border: none; border-radius: 0.5rem; padding: 0.75rem; font-weight: 800; text-decoration: none; transition: 0.2s;">Review</a>
+                                        
+                                        <button onclick="cancelTask(${task.id}, event)" style="flex: 1; background: #ef4444; color: white; border: none; border-radius: 0.5rem; padding: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s;">Cancel</button>
+                                    </div>
+                                `;
+                            }
+
+                            let unassignBtnHtml = "";
+                            if (task.status === "assigned" && task.payment_status === "unpaid") {
+                                unassignBtnHtml = `<button onclick="unassignTask(${task.id}, event)" style="margin-top: 1rem; width: 50%; background: #ef4444; color: #ffffff; border:none; border-radius: 0.7rem; padding: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s;">Cancel Worker & Relist Task</button>`;
+                            }
+
+                            postedContainer.innerHTML += `
+                                <div class="task-card" style="background: rgba(0,0,0,0.3); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);" onclick="this.classList.toggle('expanded')">
+                                    <div class="task-card-header">
+                                        <div>
+                                            <h3 class="task-title" style="color: white;">${task.title}</h3>
+                                            <span class="task-category-tag">${task.category}</span>
+                                        </div>
+                                        <div class="task-payment">
+                                            <span class="payment-label" style="color: #9ca3af; font-weight: 700;">Budget</span>
+                                            <span class="task-amount" style="color: white;">₹${task.payment}</span>
+                                        </div>
+                                    </div>
+                                    <div class="task-description">
+                                        <div style="background: rgba(59, 228, 119, 0.1); border: 1px solid rgba(59, 228, 119, 0.3); padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <span style="font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; font-weight: bold;">Assigned Worker</span><br>
+                                                <span style="color: white; font-weight: bold; font-size: 1.1rem;">${task.contact_name}</span>
+                                            </div>
+                                            ${task.contact_phone ? `
+                                            <div style="text-align: right;">
+                                                <span style="font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; font-weight: bold;">Contact Number</span><br>
+                                                <span style="color: #3BE477; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px;">📞 ${task.contact_phone}</span>
+                                            </div>` : ''}
+                                        </div>
+
+                                        <span style="color: #ffffff; font-size: 0.8rem; text-transform: uppercase; font-weight: bold;">Live Progress Tracker</span><br>
+                                        ${timelineHTML}
+                                        ${paymentBtnHtml}
+                                        ${unassignBtnHtml}
+                                        ${openTaskActionsHtml}
+                                    </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else { postedSection.style.display = "none"; }
+                });
+        }
+
+        async function postTaskUpdate(taskId, event) {
+            event.stopPropagation();
+
+            const perc = document.getElementById(`perc-${taskId}`).value;
+            const msg = document.getElementById(`msg-${taskId}`).value;
+            const proofInput = document.getElementById(`proof-${taskId}`);
+
+            if (!perc || !msg) {
+                showToast('Please enter both a percentage and a message.', 'error');
+                return;
+            }
+            if ((perc == 50 || perc == 100) && (!proofInput || !proofInput.files[0])) {
+                showToast('You must upload an image as proof of work for this milestone!', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('percentage', perc);
+            formData.append('message', msg);
+            if (proofInput && proofInput.files[0]) {
+                formData.append('proof', proofInput.files[0]);
+            }
+
+            const response = await fetch(`/add-task-update/${taskId}`, {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+
+            loadMyTasks();
+        }
+
+        function toggleProofInput(taskId) {
+            const perc = document.getElementById(`perc-${taskId}`).value;
+            const proofContainer = document.getElementById(`proof-container-${taskId}`);
+            if (perc == 50 || perc == 100) {
+                proofContainer.style.display = 'block';
+            } else {
+                proofContainer.style.display = 'none';
+            }
+        }
+
+        async function processPayment(taskId, event) {
+            event.stopPropagation();
+            if (!confirm("Are you sure you want to release these funds to the worker?")) return;
+
+            const response = await fetch(`/process-payment/${taskId}`, { method: "POST" });
+            const result = await response.json();
+
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+
+            loadMyTasks();
+        }
+
+        function toggleProofInput(taskId) {
+            const perc = document.getElementById(`perc-${taskId}`).value;
+            const proofContainer = document.getElementById(`proof-container-${taskId}`);
+            if (perc == 50 || perc == 100) {
+                proofContainer.style.display = 'block';
+            } else {
+                proofContainer.style.display = 'none';
+            }
+        }
+
+        async function applyTask(taskId) {
+          const pitch = prompt("Why are you a great fit for this task? (e.g., 'I have 3 years of plumbing experience')");
+            if (!pitch) return; 
+
+            const response = await fetch(`/apply-task/${taskId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: pitch })
+            });
+
+            const result = await response.json();
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+            loadTasks();
+        }
+
+        async function unassignTask(taskId, event) {
+            event.stopPropagation();
+            if (!confirm("Are you sure you want to remove this worker? The task will be put back on the public feed and all current progress will be wiped.")) return;
+
+            const response = await fetch(`/unassign-task/${taskId}`, { method: "POST" });
+            const result = await response.json();
+
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+
+            loadTasks();
+            loadMyTasks();
+        }
+        async function cancelTask(taskId, event) {
+            event.stopPropagation();
+            if (!confirm("Are you sure you want to completely cancel and delete this task? This cannot be undone.")) return;
+
+            const response = await fetch(`/cancel-task/${taskId}`, { method: "POST" });
+            const result = await response.json();
+
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+
+            loadTasks();
+            loadMyTasks();
+        }
+        function setGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'Good evening,';
+            if (hour < 12) {
+                greeting = 'Good morning,';
+            } else if (hour < 18) {
+                greeting = 'Good afternoon,';
+            }
+            document.getElementById('greeting-text').innerText = greeting;
+        }
+        function setActive(clickedElement) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            clickedElement.classList.add('active');
+        }
+
+        setGreeting();
+        loadTasks();
+        loadMyTasks();
+    </script>
+
+</body>
+
+</html>
