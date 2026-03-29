@@ -1,83 +1,228 @@
-{% extends "base.html" %}
-{% import 'components.html' as ui with context %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}ZipTask - Home{% endblock %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZipTask - Organize Your Tasks, Achieve Your Goals</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
 
-{% block content %}
-<!-- Split Hero Section -->
-<section class="hero">
-  <div class="hero-bg-accent"></div>
-  <div class="container hero-container">
-    <div class="hero-text-content">
-      {{ ui.badge('🚀 Simplify your life') }}
-      <h1 class="hero-title">Your everyday tasks,<br><span class="text-gradient">handled locally.</span></h1>
-      <p class="hero-description">
-        ZipTask connects you with trusted neighbors within a 5km radius to help you get things done. Quick, secure, and community-driven.
-      </p>
-      <div class="hero-buttons">
-        {{ ui.button('Explore Tasks', url_for('register'), 'primary', 'lg', icon='arrow-right') }}
-        {{ ui.button('Earn Money', url_for('login'), 'secondary', 'lg') }}
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-content">
+      <div class="logo">
+        <div class="logo-icon">
+          <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="ZipTask Logo">
+        </div>
+        <span class="logo-text">ZipTask</span>
+      </div>
+
+      <nav class="nav">
+        <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+        <a href="{{ url_for('auth.login_page') }}" class="nav-link">Login</a>
+      </nav>
+
+      <a href="{{ url_for('auth.register_page') }}" class="btn btn-primary">Get Started</a>
+    </div>
+  </header>
+
+  <section class="video-banner">
+    <video autoplay muted loop playsinline class="banner-video">
+      <source src="{{ url_for('static', filename='videos/loop_video.mp4') }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </section>
+
+  <!-- Hero Section -->
+  <section class="hero">
+
+    <div class="container hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Organize Your Tasks,<br><span class="text-gradient">Achieve Your Goals</span></h1>
+        <p class="hero-description">
+          ZipTask helps you create, manage, and complete tasks efficiently with intuitive organization, deadline
+          tracking, and real-time payment integration for task-related services.
+        </p>
+        <div class="hero-buttons">
+          <a href="register.html" class="btn btn-primary-large">Start Free Today</a>
+          <a href="login_page.html" class="btn btn-secondary-large">Sign In</a>
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <img src="{{ url_for('static', filename='images/hero.jpeg') }}" alt="Person working on tasks">
       </div>
     </div>
-    <div class="hero-visual">
-       <div class="visual-wrapper">
-           <div class="video-container">
-               <video autoplay muted loop playsinline class="hero-video">
-                  <source src="{{ url_for('static', filename='videos/loop_video.mp4') }}" type="video/mp4">
-               </video>
-           </div>
-           {{ ui.floating_card('sparkles', 'Cleaning Task', 'Completed • $45', 'c1') }}
-           {{ ui.floating_card('mail', 'Delivery', 'Matched in 2m', 'c2') }}
-       </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- Categories -->
+<!-- Categories Section -->
 <section class="categories">
   <div class="container">
-    <div class="section-header">
-      <h2 class="section-title">What do you need help with?</h2>
-      <p class="section-desc">Browse our most popular task categories around you</p>
-    </div>
-    <div class="categories-grid">
-      {{ ui.category_card('Cleaning', 'cleaning.jpeg') }}
-      {{ ui.category_card('Delivery', 'delivery.jpeg') }}
-      {{ ui.category_card('Repairs', 'repair.jpeg') }}
-      {{ ui.category_card('Grocery Help', 'grocery help.jpeg') }}
-      {{ ui.category_card('Pet Care', 'pet care.jpeg') }}
+    <h2 class="categories-title">Task Categories We Offer</h2>
+
+    <div class="categories-slider">
+      <div class="categories-track">
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/cleaning.jpeg') }}" alt="Cleaning">
+          <p class="categories-text">Cleaning</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/delivery.jpeg') }}" alt="Delivery">
+          <p class="categories-text">Delivery</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/repair.jpeg') }}" alt="Repairs">
+          <p class="categories-text">Repairs</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/grocery help.jpeg') }}" alt="Grocery">
+          <p class="categories-text">Grocery Pickup</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/pet care.jpeg') }}" alt="Pet Care">
+          <p class="categories-text">Pet Care</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/tutoring.jpeg') }}" alt="Tutoring">
+          <p class="categories-text">Tutoring</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/moving help.jpeg') }}" alt="Moving">
+          <p class="categories-text">Moving Help</p>
+        </div>
+
+        <!-- duplicate cards for infinite loop -->
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/cleaning.jpeg') }}" alt="Cleaning">
+          <p class="categories-text">Cleaning</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/delivery.jpeg') }}" alt="Delivery">
+          <p class="categories-text">Delivery</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/repair.jpeg') }}" alt="Repairs">
+          <p class="categories-text">Repairs</p>
+        </div>
+
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Features -->
-<section class="features">
-  <div class="container">
-    <div class="section-header center">
-      <h2 class="section-title">Why choose ZipTask?</h2>
-      <p class="section-desc">Built from the ground up to give you the best local task experience.</p>
-    </div>
-    <div class="features-grid">
-      {{ ui.feature_box('crosshair', 'Smart Matching', 'We instantly pair your tasks with qualified helpers within a 5 km radius using location-based algorithms.') }}
-      {{ ui.feature_box('shield-check', 'Secure & Trusted', 'All taskers undergo verification. Payments are held securely until the task is marked as complete.') }}
-      {{ ui.feature_box('zap', 'Lightning Fast', 'Need something done today? Our on-demand network ensures quick acceptances and rapid completions.') }}
-      {{ ui.feature_box('layout', 'Clean Interface', 'No clutter, no confusion. Our modern app design makes posting and accepting errands an absolute breeze.') }}
-    </div>
-  </div>
-</section>
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 class="features-title"><span class=text-gradient>KEY FEATURES</span></h2>
+      <p class="features-subtitle">
+        Everything you need to get things done locally<br>
+        — fast, safe, and affordable.
+      </p>
 
-<!-- CTA -->
-<section class="cta">
-  <div class="container">
-    <div class="cta-box">
-      <div class="cta-text">
-        <h2 class="cta-title">Ready to tackle your to-do list?</h2>
-        <p class="cta-desc">Join thousands of locals getting things done and earning money on ZipTask.</p>
-      </div>
-      <div class="cta-actions">
-        {{ ui.button('Create Free Account', url_for('register'), 'cta', '', 'btn-cta', icon='user-plus') }}
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><img src="{{ url_for('static', filename='images/notepad-icon.jpeg') }}" alt="Notepad"></div>
+          <h3 class="feature-title">Smart Task Organization</h3>
+          <p class="feature-description">
+            Create categories, use tags, and prioritize tasks. Organize your tasks with intuitive interfaces. Add
+            subtasks, set deadlines, prioritize, and keep everything in one place.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><img src="{{ url_for('static', filename='images/Lock-icon.png') }}" alt="Lock"></div>
+          <h3 class="feature-title">User Registration & Secure Access</h3>
+          <p class="feature-description">
+            Post errands easily by adding task details, location, and budget. Find people ready to handle your tasks.
+            Select the ones you're offering.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><img src="{{ url_for('static', filename='images/Map-icon.png') }}" alt="Map"></div>
+          <h3 class="feature-title">Nearby Task Matching</h3>
+          <p class="feature-description">
+            ZipTask displays errands within a 5 km radius. This location-based feature helps you find tasks to accept
+            quick, and easy to complete.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><img src="{{ url_for('static', filename='images/Tick-icon.png') }}" alt="Tick"></div>
+          <h3 class="feature-title">Easy Task Acceptance</h3>
+          <p class="feature-description">
+            Quickly accept errands to browse available errands and accept tasks based on your skill level and
+            availability. It follows a user-friendly posting to completion.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><img src="{{ url_for('static', filename='images/Star-icon.png') }}" alt="star"></div>
+          <h3 class="feature-title">Clean and User-Friendly Interface</h3>
+          <p class="feature-description">
+            The platform features a simple, clean design that makes tasks intuitive and easy to use. No technical
+            expertise is required for users to use it effectively.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><img src="{{ url_for('static', filename='images/Community-icon.png') }}" alt="Community"></div>
+          <h3 class="feature-title">Community Driven Platform</h3>
+          <p class="feature-description">
+            ZipTask connects people within the same locality, fostering a sense of community and enabling community
+            collaboration.
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
-{% endblock %}
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container cta-content">
+      <h2 class="cta-title">Ready to Transform Your Productivity?</h2>
+      <p class="cta-description">
+        ZipTask connects you with trusted local workers within a 5KM radius.<br>
+        Post a task to immediately see it done today. Earn money helping your community.
+      </p>
+      <button class="btn btn-white-large">Sign Up Now</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="logo-icon">
+          <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="ZipTask Logo">
+        </div>
+        <div>
+          <span class="footer-logo-text">ZipTask</span>
+          <p class="footer-description">
+            Hyperlocal errand marketplace connecting task<br>
+            posters with eager workers.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-copyright">
+        © 2026 ZipTask. All rights reserved.
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
