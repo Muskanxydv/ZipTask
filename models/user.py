@@ -1,10 +1,9 @@
-import uuid
 from models import db
 
 
 class User(db.Model):
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(100), nullable=False)
 
@@ -15,3 +14,10 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
 
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    gender = db.Column(db.String(20), nullable=True)
+    dob = db.Column(db.String(20), nullable=True)
+    profile_pic = db.Column(db.String(255), nullable=True)
+    tasks_completed = db.Column(db.Integer, default=0)
+    total_rating = db.Column(db.Float, default=0.0)
+    rating_count = db.Column(db.Integer, default=0)
