@@ -15,22 +15,21 @@ from routes.auth_routes import auth_bp
 app = Flask(__name__)
 app.register_blueprint(dashboard_bp)
 
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
+UPLOAD_FOLDER ='/home/ZipTask/ZipTask/static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.secret_key = os.environ.get("SECRET_KEY")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ziptask.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = os.environ.get("SECRET_KEY", "fallback_default_secret_key")
+database_url = os.environ.get("DATABASE_URL", "sqlite:///ziptask.db")
+
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 db.init_app(app)
 
 app.register_blueprint(auth_bp)
-
-
-# --------------------------
-# Home Page
-# --------------------------
 
 @app.route("/")
 def home():
@@ -43,12 +42,6 @@ def about():
 @app.route("/forgot-password")
 def forgot_password():
     return render_template("forgot_password.html")
-
-
-
-# --------------------------
-# Run server
-# --------------------------
 
 if __name__ == "__main__":
 
