@@ -21,3 +21,4 @@ class User(db.Model):
     tasks_completed = db.Column(db.Integer, default=0)
     total_rating = db.Column(db.Float, default=0.0)
     rating_count = db.Column(db.Integer, default=0)
+    upi_id = db.Column(db.String(100), nullable=True)
