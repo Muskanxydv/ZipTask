@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - ZipTask</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="ZipTask Logo">
+                </div>
+                <span class="logo-text">ZipTask</span>
+            </div>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link" style="color: #047857; font-weight: bold;">About Us</a>
+                <a href="/login" class="nav-link">Login</a>
+            </nav>
+            <a href="/register" class="btn btn-primary">Get Started</a>
+        </div>
+    </header>
+
+    <section class="about-section">
+        <div class="container">
+            <h1 class="about-title">Meet The ZipTask Team</h1>
+            <p class="about-subtitle">We are a passionate group of 5 builders on a mission to connect communities and make hyperlocal errands seamless for everyone.</p>
+
+            <div class="team-grid">
+                
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('static', filename='images/Muskan.jpeg') }}" alt="Team Member">
+                            <h3>Muskan</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Lead Developer</h3>
+                            <p>Architecting the core Python backend, designing the relational database, and writing the complex application logic.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('static', filename='images/Anju.jpeg') }}" alt="Team Member">
+                            <h3>Anju</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Frontend Developer & Design Lead</h3>
+                            <p>Writing the extensive custom CSS architecture, implementing complex responsive layouts, and translating user research into interactive visual components.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('static', filename='images/Sana.jpeg') }}" alt="Team Member">
+                            <h3>Sana</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Quality Assurance & Operations</h3>
+                            <p>Ensuring the highest quality standards and managing the day-to-day operations of the platform.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('static', filename='images/Vignesh.jpeg') }}" alt="Vignesh">
+                            <h3>Vignesh</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Product Strategy Manager</h3>
+                            <p>Defining the platform's business rules, planning the secure UPI payment flow, and mapping out the extensive task categorization system.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('static', filename='images/Sarthak.jpeg') }}" alt="Team Member">
+                            <h3>Sarthak</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>UI/UX Architect & Market Analyst</h3>
+                            <p>Conducting hyperlocal market surveys to identify user pain points and designing the initial wireframes and user journey maps.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="ZipTask Logo">
+                </div>
+                <div>
+                    <span class="footer-logo-text">ZipTask</span>
+                    <p class="footer-description">Hyperlocal errand marketplace connecting task posters with eager workers.</p>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                © 2026 ZipTask. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
