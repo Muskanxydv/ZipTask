@@ -4,8 +4,6 @@ from models.task import Task
 
 task_bp = Blueprint("task", __name__)
 
-
-# Create a new errand
 @task_bp.route("/create-task", methods=["POST"])
 def create_task():
 
@@ -26,8 +24,6 @@ def create_task():
 
     return jsonify({"message": "Task created successfully"})
 
-
-# Accept a task
 @task_bp.route("/accept-task", methods=["POST"])
 def accept_task():
 
@@ -42,8 +38,6 @@ def accept_task():
 
     return jsonify({"message": "Task accepted"})
 
-
-# Complete a task
 @task_bp.route("/complete-task", methods=["POST"])
 def complete_task():
 
